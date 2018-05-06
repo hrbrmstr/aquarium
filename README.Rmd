@@ -1,0 +1,94 @@
+---
+output: rmarkdown::github_document
+---
+
+# aquarium
+
+Validate 'Phishing' 'URLs' with the 'PhishTank' Service
+
+## Description
+
+'PhishTank' <www.phishtank.com> is a free community site where anyone can submit, 
+verify, track and share 'phishing' data. Methods are provided to test if a 'URL' is classsified 
+as a 'phishing' site and to download aggregated 'phishing' 'URL' databases.
+
+## What's Inside The Tin
+
+The following functions are implemented:
+
+- `pt_check_url`:	Check an individual URL against PhishTank's database
+- `pt_read_db`:	Retrieve a complete copy of the current PhishTank database
+
+## Installation
+
+```{r eval=FALSE}
+devtools::install_github("hrbrmstr/aquarium")
+```
+
+```{r message=FALSE, warning=FALSE, error=FALSE, include=FALSE}
+options(width=120)
+```
+
+## Usage
+
+```{r message=FALSE, warning=FALSE, error=FALSE}
+library(aquarium)
+library(hrbrthemes)
+library(tidyverse)
+
+# current verison
+packageVersion("aquarium")
+
+```
+
+### Test a URL
+
+```{r cache=TRUE}
+x <- pt_check_url("http://www.seer.revpsi.org/hhh/1/")
+
+x
+
+glimpse(x)
+```
+
+### Get the databases
+
+```{r cache=TRUE}
+x <- pt_read_db(.progress = FALSE)
+
+x
+
+glimpse(x)
+```
+
+### Top Phishing Targets
+
+```{r tgts, fig.width=9, fig.height=9, fig.retina=2}
+filter(x, verified == "yes") %>% 
+  count(day = as.Date(verification_time), target) -> targets
+
+count(targets, target, sort=TRUE) %>%
+  filter(target != "Other") %>% 
+  head(9) -> top_named_targets
+
+filter(targets, target %in% top_named_targets$target) %>% 
+  mutate(target = factor(target, levels=rev(top_named_targets$target))) %>% 
+  ggplot(aes(day, n, group=target, color=target)) +
+  geom_segment(aes(xend=day, yend=0), size=0.25) +
+  scale_x_date(name = NULL, limits=as.Date(c("2008-01-01", "2018-06-31"))) +
+  scale_y_comma(name = "# entries/day") +
+  ggthemes::scale_color_tableau() +
+  facet_wrap(~target, scales="free") +
+  labs(
+    title = "PhishTank Top Phishing Targets 2008-present",
+    subtitle = "Note: Free Y scale",
+    caption = "Source: PhishTank <phishtank.com>"
+  ) +
+  theme_ipsum_rc(grid="Y", strip_text_face = "bold") +
+  theme(legend.position="none")
+```
+
+## Code of Conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+

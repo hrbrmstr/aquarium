@@ -1,0 +1,25 @@
+Package: aquarium
+Type: Package
+Title: Validate 'Phishing' 'URLs' with the 'PhishTank' Service
+Version: 0.1.0
+Date: 2018-05-06
+Authors@R: c(
+    person("Bob", "Rudis", email = "bob@rud.is", role = c("aut", "cre"), 
+           comment = c(ORCID = "0000-0001-5670-2640"))
+  )
+Maintainer: Bob Rudis <bob@rud.is>
+Description: 'PhishTank' <www.phishtank.com> is a free community site where anyone can submit, 
+    verify, track and share 'phishing' data. Methods are provided to test if a 'URL' is classsified 
+    as a 'phishing' site and to download aggregated 'phishing' 'URL' databases.
+URL: https://github.com/hrbrmstr/aquarium
+BugReports: https://github.com/hrbrmstr/aquarium/issues
+Encoding: UTF-8
+License: AGPL
+Suggests:
+    testthat,
+    covr
+Depends:
+    R (>= 3.2.0)
+Imports:
+    httr
+RoxygenNote: 6.0.1.9000
